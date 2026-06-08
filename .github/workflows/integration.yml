@@ -1,0 +1,76 @@
+name: Integration
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, 'ci/*' ]
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: erp
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Build backend
+        working-directory: erp/backend
+        run: |
+          npm ci
+          npm run build
+      - name: Apply DB schema
+        working-directory: erp/backend
+        env:
+          DB_HOST: localhost
+          DB_USER: postgres
+          DB_PASS: postgres
+          DB_NAME: erp
+        run: |
+          node ./src/scripts/applySchema.js
+      - name: Seed RBAC
+        working-directory: erp/backend
+        env:
+          DB_HOST: localhost
+          DB_USER: postgres
+          DB_PASS: postgres
+          DB_NAME: erp
+        run: |
+          node ./scripts/seedRbac.js
+      - name: Start backend
+        working-directory: erp/backend
+        env:
+          DB_HOST: localhost
+          DB_USER: postgres
+          DB_PASS: postgres
+          DB_NAME: erp
+          JWT_SECRET: changeme
+          REDIS_URL: redis://localhost:6379
+        run: |
+          nohup node dist/main.js &
+          echo "Starting worker"
+          nohup node dist/worker.js &
+          sleep 3
+      - name: Run E2E
+        working-directory: erp/backend
+        env:
+          BASE_URL: http://localhost:3000/api
+          ADMIN_EMAIL: admin@local
+          ADMIN_PASS: admin123
+        run: |
+          node ./scripts/runE2E.js
