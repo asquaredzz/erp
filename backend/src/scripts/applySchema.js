@@ -1,7 +1,20 @@
 const fs = require('fs');
 const { Client } = require('pg');
 
-const sqlPath = require('path').resolve(__dirname, '..', '..', 'db', 'schema.sql');
+const path = require('path');
+
+// Try multiple locations for schema.sql so CI and local layouts both work.
+const candidates = [
+  path.resolve(__dirname, '..', '..', 'db', 'schema.sql'), // backend/db/schema.sql
+  path.resolve(__dirname, '..', '..', '..', 'db', 'schema.sql'), // repo-root/db/schema.sql
+  path.resolve(process.cwd(), 'db', 'schema.sql'), // current working dir db/schema.sql
+];
+
+let sqlPath = candidates.find(p => fs.existsSync(p));
+if (!sqlPath) {
+  throw new Error('schema.sql not found in any expected location: ' + candidates.join(', '));
+}
+
 const sql = fs.readFileSync(sqlPath, 'utf8');
 
 const client = new Client({
