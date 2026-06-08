@@ -11,37 +11,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node
-        uses: actions/setup-node@v4
+
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+
       - name: Install dependencies
-        run: |
-          cd erp/backend
-          npm ci
+        working-directory: backend
+        run: npm ci
+
       - name: Build
-        run: |
-          cd erp/backend
-          npm run build || true
+        working-directory: backend
+        run: npm run build
+
       - name: Run backend e2e (sketch)
-        run: |
-          cd erp/backend
-          npm run build || true
-          # e2e tests require services; this is a placeholder
-          echo "E2E scaffold"
+        working-directory: backend
+        run: echo "Backend e2e placeholder"
 
   frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node
-        uses: actions/setup-node@v4
+
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+
       - name: Install and Build
+        working-directory: frontend
         run: |
-          cd erp/frontend
           npm ci
           npm run build || true
+
       - name: Deploy preview (sketch)
         run: echo "Preview step placeholder"
