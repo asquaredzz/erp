@@ -140,8 +140,7 @@ CREATE TABLE IF NOT EXISTS inventory_transactions (
   source_warehouse_id uuid REFERENCES warehouses(id) ON DELETE SET NULL,
   destination_warehouse_id uuid REFERENCES warehouses(id) ON DELETE SET NULL,
   bin_id uuid REFERENCES bins(id) ON DELETE SET NULL,
-  related_order_id uuid REFERENCES orders(id) ON DELETE SET NULL,
-  related_order_item_id uuid REFERENCES order_items(id) ON DELETE SET NULL,
+ 
   change numeric NOT NULL, -- +/- quantity
   event_type inventory_event_type NOT NULL,
   reason text,
@@ -265,3 +264,7 @@ DROP TRIGGER IF EXISTS trg_apply_inventory_transaction ON inventory_transactions
 CREATE TRIGGER trg_apply_inventory_transaction
 AFTER INSERT ON inventory_transactions
 FOR EACH ROW EXECUTE PROCEDURE fn_apply_inventory_transaction();
+-- Add order references after orders/order_items are defined
+ALTER TABLE inventory_transactions
+  ADD COLUMN IF NOT EXISTS related_order_id uuid REFERENCES orders(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS related_order_item_id uuid REFERENCES order_items(id) ON DELETE SET NULL;
