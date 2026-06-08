@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erp-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: erp-worker
+  template:
+    metadata:
+      labels:
+        app: erp-worker
+    spec:
+      containers:
+        - name: worker
+          image: your-registry/erp-backend:latest
+          command: ["node", "dist/worker.js"]
+          env:
+            - name: REDIS_URL
+              value: redis://redis:6379

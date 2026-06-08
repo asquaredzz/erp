@@ -1,0 +1,46 @@
+@startuml
+title ERP Schema (simplified)
+entity SKUs {
+  *id : uuid
+  --
+  sku_code : text
+  name : text
+  cost_price : numeric
+  selling_price : numeric
+}
+
+entity BARCODES {
+  *id : uuid
+  --
+  sku_id : uuid
+  code : text
+  type : text
+}
+
+entity WAREHOUSES {
+  *id : uuid
+  --
+  name : text
+}
+
+entity INVENTORY_LEVELS {
+  *id : uuid
+  --
+  sku_id : uuid
+  warehouse_id : uuid
+  quantity_on_hand : numeric
+}
+
+entity ORDERS {
+  *id : uuid
+  --
+  customer_id : uuid
+  status : text
+}
+
+SKUs ||--o{ BARCODES : has
+SKUs ||--o{ INVENTORY_LEVELS : stocked_in
+WAREHOUSES ||--o{ INVENTORY_LEVELS : contains
+ORDERS ||--o{ "order_items" : contains
+
+@enduml

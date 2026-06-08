@@ -1,0 +1,7 @@
+replicaCount: 1
+image:
+  repository: your-registry/erp-backend
+  tag: latest
+  pullPolicy: IfNotPresent
+frontend:
+  image: your-registry/erp-frontend:latest
