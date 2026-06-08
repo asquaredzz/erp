@@ -29,31 +29,36 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - name: Build backend
-        working-directory: erp/backend
+      - name: Debug repo layout
         run: |
+          echo "PWD: $(pwd)"
+          echo "Listing root:"; ls -la
+          echo "Listing workspace/backend:"; ls -la backend || true
+
+      - name: Build backend
+        run: |
+          cd backend
           npm ci
           npm run build
       - name: Apply DB schema
-        working-directory: erp/backend
         env:
           DB_HOST: localhost
           DB_USER: postgres
           DB_PASS: postgres
           DB_NAME: erp
         run: |
+          cd backend
           node ./src/scripts/applySchema.js
       - name: Seed RBAC
-        working-directory: erp/backend
         env:
           DB_HOST: localhost
           DB_USER: postgres
           DB_PASS: postgres
           DB_NAME: erp
         run: |
+          cd backend
           node ./scripts/seedRbac.js
       - name: Start backend
-        working-directory: erp/backend
         env:
           DB_HOST: localhost
           DB_USER: postgres
@@ -62,15 +67,16 @@ jobs:
           JWT_SECRET: changeme
           REDIS_URL: redis://localhost:6379
         run: |
+          cd backend
           nohup node dist/main.js &
           echo "Starting worker"
           nohup node dist/worker.js &
           sleep 3
       - name: Run E2E
-        working-directory: erp/backend
         env:
           BASE_URL: http://localhost:3000/api
           ADMIN_EMAIL: admin@local
           ADMIN_PASS: admin123
         run: |
+          cd backend
           node ./scripts/runE2E.js
