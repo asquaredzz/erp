@@ -29,7 +29,7 @@ async function run() {
 
     // Map permissions to Admin role as simple seed
     const adminIdRes = await client.query(`SELECT id FROM roles WHERE name = 'Admin' LIMIT 1`);
-    const adminId = adminIdRes.rows[0].id;
+    let adminId = adminIdRes.rows[0].id;
     const permRows = await client.query(`SELECT id FROM permissions`);
     for (const pr of permRows.rows) {
       await client.query(`INSERT INTO role_permissions (role_id, permission_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`, [adminId, pr.id]);
