@@ -28,7 +28,7 @@ jobs:
       - name: Use Node 18
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       - name: Debug repo layout
         run: |
           echo "PWD: $(pwd)"
@@ -68,10 +68,12 @@ jobs:
           REDIS_URL: redis://localhost:6379
         run: |
           cd backend
-          nohup node dist/main.js &
-          echo "Starting worker"
-          nohup node dist/worker.js &
-          sleep 3
+          nohup node dist/main.js > /tmp/backend.log 2>&1 &
+          sleep 8
+          echo "=== Backend log ==="
+          cat /tmp/backend.log
+         
+          
       - name: Run E2E
         env:
           BASE_URL: http://localhost:3000/api
