@@ -41,7 +41,6 @@ async function run() {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@local';
     const adminPassword = process.env.ADMIN_PASS || 'admin123';
     const userRes = await client.query(`SELECT id FROM users WHERE email = $1 LIMIT 1`, [adminEmail]);
-    let adminId;
     if (userRes.rows.length === 0) {
       const hash = await bcrypt.hash(adminPassword, 10);
       const r = await client.query(`INSERT INTO users (id, email, password_hash, display_name, created_at) VALUES (uuid_generate_v4(), $1, $2, $3, now()) RETURNING id`, [adminEmail, hash, 'Admin']);
