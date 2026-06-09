@@ -7,10 +7,12 @@ import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
 import { FinalizeService } from './finalize.service';
 import { InventoryModule } from '../inventory/inventory.module';
+import { InventoryTransaction } from '../inventory/entities/inventory-transaction.entity';
+import { InventoryLevel } from '../inventory/entities/inventory-level.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, OrderItem, Reservation]), InventoryModule],
-  providers: [OrdersService, FinalizeService],
-  controllers: [OrdersController]
+imports: [TypeOrmModule.forFeature([Order, OrderItem, Reservation, InventoryTransaction, InventoryLevel]), InventoryModule],
+providers: [OrdersService, FinalizeService],
+controllers: [OrdersController]
 })
 export class OrdersModule {}
