@@ -69,6 +69,7 @@ jobs:
         run: |
           cd backend
           nohup node dist/main.js > /tmp/backend.log 2>&1 &
+          nohup node dist/worker.js > /tmp/worker.log 2>&1 &
           sleep 8
           echo "=== Backend log ==="
           cat /tmp/backend.log
