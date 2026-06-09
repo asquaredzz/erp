@@ -11,6 +11,8 @@ import { InventoryController } from './inventory.controller';
 @Module({
   imports: [TypeOrmModule.forFeature([Sku, Barcode, Warehouse, InventoryLevel, InventoryTransaction])],
   providers: [InventoryService],
-  controllers: [InventoryController]
+  controllers: [InventoryController],
+  exports: [InventoryService]
 })
 export class InventoryModule {}
+
