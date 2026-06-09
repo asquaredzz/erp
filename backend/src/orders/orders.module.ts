@@ -13,6 +13,7 @@ import { InventoryLevel } from '../inventory/entities/inventory-level.entity';
 @Module({
 imports: [TypeOrmModule.forFeature([Order, OrderItem, Reservation, InventoryTransaction, InventoryLevel]), InventoryModule],
 providers: [OrdersService, FinalizeService],
-controllers: [OrdersController]
+controllers: [OrdersController],
+exports: [OrdersService],
 })
 export class OrdersModule {}
