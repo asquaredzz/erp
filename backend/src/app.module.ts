@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { PaymentsController } from './payments/payments.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { InventoryModule } from './inventory/inventory.module';
 import { OrdersModule } from './orders/orders.module';
@@ -27,7 +28,10 @@ dotenv.config();
     require('./automation/automation.module').AutomationModule,
     require('./assistant/assistant.module').AssistantModule
   ],
-  controllers: [require('./health/health.controller').HealthController],
+  controllers: [
+  require('./health/health.controller').HealthController,
+  PaymentsController
+],
   providers: []
 })
 export class AppModule {}
