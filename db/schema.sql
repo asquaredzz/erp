@@ -268,3 +268,9 @@ FOR EACH ROW EXECUTE PROCEDURE fn_apply_inventory_transaction();
 ALTER TABLE inventory_transactions
   ADD COLUMN IF NOT EXISTS related_order_id uuid REFERENCES orders(id) ON DELETE SET NULL,
   ADD COLUMN IF NOT EXISTS related_order_item_id uuid REFERENCES order_items(id) ON DELETE SET NULL;
+  CREATE TABLE IF NOT EXISTS processed_events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  event_hash VARCHAR(64) UNIQUE NOT NULL,
+  payload JSONB,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
